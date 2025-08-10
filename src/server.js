@@ -22,6 +22,7 @@ export const setupServer = () => {
   app.get('/contacts', router);
   app.get('/contacts/:contactID', router);
   app.post('/contacts', router);
+  app.patch('/contacts/:contactID', router);
 
   app.use(notFoundHandler);
 
