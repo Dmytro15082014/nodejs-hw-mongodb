@@ -25,9 +25,9 @@ export const setupServer = () => {
   app.patch('/contacts/:contactID', router);
   app.delete('/contacts/:contactID', router);
 
-  app.use(notFoundHandler);
-
   app.use(errorHandler);
+
+  app.use(notFoundHandler);
 
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
