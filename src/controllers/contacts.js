@@ -53,7 +53,7 @@ export const updateContactByIdController = async (req, res, next) => {
   res.status(200).json({
     status: 200,
     message: 'Successfully patched a contact!',
-    data: contact,
+    data: contact.value,
   });
 };
 
