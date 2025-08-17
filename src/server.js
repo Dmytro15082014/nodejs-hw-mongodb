@@ -6,6 +6,7 @@ import { errorHandler } from './middlewares/errorHandler.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import router from './routers/contacts.js';
 
+
 const PORT = Number(getEnvVar('PORT', '3000'));
 
 export const setupServer = () => {
@@ -13,6 +14,7 @@ export const setupServer = () => {
 
   app.use(express.json());
   app.use(cors());
+
   app.use(
     pino({
       transport: { target: 'pino-pretty' },
