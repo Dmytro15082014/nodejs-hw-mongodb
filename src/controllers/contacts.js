@@ -6,9 +6,11 @@ import {
   updateContactById,
 } from '../services/contacts.js';
 import createHttpError from 'http-errors';
+import { parsedPaginationNumbers } from '../utils/parsedPaginationNumbers.js';
 
 export const getAllContactsController = async (req, res) => {
-  const contacts = await getAllContacts();
+  const { page, perPage } = parsedPaginationNumbers(req.query);
+  const contacts = await getAllContacts({ page, perPage });
 
   res.status(200).json({
     status: 200,
