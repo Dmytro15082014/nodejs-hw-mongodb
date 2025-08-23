@@ -19,4 +19,4 @@ const userSchema = new Schema(
   },
 );
 
-export const Users = model('contacts', userSchema);
+export const Users = model('users', userSchema);
