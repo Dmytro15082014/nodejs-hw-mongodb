@@ -7,7 +7,7 @@ const userSchema = new Schema(
       type: String,
       required: true,
       unique: true,
-      pattern: '^[w-.]+@([w-]+.)+[w-]{2,4}?$',
+      match: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/,
     },
     password: { type: String, required: true },
     createdAt: { type: Date, default: Date.now },
@@ -19,4 +19,4 @@ const userSchema = new Schema(
   },
 );
 
-export const Users = model('users', userSchema);
+export const UsersCollection = model('users', userSchema);
