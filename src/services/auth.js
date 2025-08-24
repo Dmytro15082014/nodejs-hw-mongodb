@@ -74,3 +74,7 @@ export const refreshSession = async (sessionId) => {
 
   return newSession;
 };
+
+export const logoutUser = async (sessionId) => {
+  await SessionsCollection.findByIdAndDelete(sessionId);
+};
