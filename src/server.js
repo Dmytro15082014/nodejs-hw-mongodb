@@ -26,6 +26,8 @@ export const setupServer = () => {
   app.patch('/contacts/:contactID', router);
   app.delete('/contacts/:contactID', router);
 
+  app.post('/auth/register', router);
+
   app.use(notFoundHandler);
 
   app.use(errorHandler);
