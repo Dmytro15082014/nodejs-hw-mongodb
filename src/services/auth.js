@@ -44,3 +44,33 @@ export const loginUser = async ({ email, password }) => {
 
   return session;
 };
+
+export const refreshSession = async (sessionId) => {
+  const session = await SessionsCollection.findById(sessionId);
+  if (!session) {
+    throw createHttpError(401, 'Session not found!');
+  }
+
+  if (session.refreshTokenValidUntil < new Date()) {
+    await SessionsCollection.findByIdAndDelete(sessionId);
+    throw createHttpError(401, 'Session not found!');
+  }
+
+  const user = await UsersCollection.findById(session.userId);
+  if (!user) {
+    await SessionsCollection.findByIdAndDelete(sessionId);
+    throw createHttpError(401, 'Session not found!');
+  }
+
+  await SessionsCollection.findByIdAndDelete(sessionId);
+
+  const newSession = await SessionsCollection.create({
+    accessToken: crypto.randomBytes(30).toString('base64'),
+    refreshToken: crypto.randomBytes(30).toString('base64'),
+    accessTokenValidUntil: new Date(Date.now() + TOKEN.ACC),
+    refreshTokenValidUntil: new Date(Date.now() + TOKEN.REF),
+    userId: user._id,
+  });
+
+  return newSession;
+};

@@ -30,6 +30,7 @@ export const setupServer = () => {
 
   app.post('/auth/register', router);
   app.post('/auth/login', router);
+  app.post('/auth/refresh', router);
 
   app.use(notFoundHandler);
 
