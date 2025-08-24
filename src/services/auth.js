@@ -1,6 +1,9 @@
 import createHttpError from 'http-errors';
+import crypto from 'node:crypto';
 import bcrypt from 'bcrypt';
 import { UsersCollection } from '../db/models/userSchema.js';
+import { SessionsCollection } from '../db/models/sessionSchema.js';
+import { TOKEN } from '../constants/constants.js';
 
 export const registerUser = async (payload) => {
   const userCheck = await UsersCollection.findOne({ email: payload.email });
@@ -13,4 +16,31 @@ export const registerUser = async (payload) => {
   const user = await UsersCollection.create({ ...payload, password: hashPass });
 
   return user;
+};
+
+export const loginUser = async ({ email, password }) => {
+  const userCheck = await UsersCollection.findOne({ email });
+  if (!userCheck) {
+    throw createHttpError(
+      401,
+      'User with given credentials does not exist, please register!',
+    );
+  }
+
+  const arePassEqual = await bcrypt.compareSync(password, userCheck.password);
+  if (!arePassEqual) {
+    throw createHttpError(401, 'Invalid password, please check input data!');
+  }
+
+  await SessionsCollection.findByIdAndDelete(userCheck._id);
+
+  const session = await SessionsCollection.create({
+    accessToken: crypto.randomBytes(30).toString('base64'),
+    refreshToken: crypto.randomBytes(30).toString('base64'),
+    accessTokenValidUntil: new Date(Date.now() + TOKEN.ACC),
+    refreshTokenValidUntil: new Date(Date.now() + TOKEN.REF),
+    userId: userCheck._id,
+  });
+
+  return session;
 };

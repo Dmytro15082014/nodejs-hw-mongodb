@@ -5,6 +5,7 @@ import { getEnvVar } from './utils/getEnvVar.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import router from './routers/index.js';
+import cookieParser from 'cookie-parser';
 
 const PORT = Number(getEnvVar('PORT', '3000'));
 
@@ -19,6 +20,7 @@ export const setupServer = () => {
       transport: { target: 'pino-pretty' },
     }),
   );
+  app.use(cookieParser());
 
   app.get('/contacts', router);
   app.get('/contacts/:contactID', router);
@@ -27,6 +29,7 @@ export const setupServer = () => {
   app.delete('/contacts/:contactID', router);
 
   app.post('/auth/register', router);
+  app.post('/auth/login', router);
 
   app.use(notFoundHandler);
 
