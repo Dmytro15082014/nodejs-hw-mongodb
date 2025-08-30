@@ -6,9 +6,21 @@ import {
   updateContactById,
 } from '../services/contacts.js';
 import createHttpError from 'http-errors';
+import { parsedPaginationNumbers } from '../utils/parsedPaginationNumbers.js';
+import { parsedSortParams } from '../utils/parsedSortParams.js';
+import { parsedFiltersParams } from '../utils/parsedFiltersParams.js';
 
 export const getAllContactsController = async (req, res) => {
-  const contacts = await getAllContacts();
+  const { page, perPage } = parsedPaginationNumbers(req.query);
+  const { sortBy, sortOrder } = parsedSortParams(req.query);
+  const filter = parsedFiltersParams(req.query);
+  const contacts = await getAllContacts({
+    page,
+    perPage,
+    sortBy,
+    sortOrder,
+    filter,
+  });
 
   res.status(200).json({
     status: 200,
