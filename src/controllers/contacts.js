@@ -15,6 +15,7 @@ export const getAllContactsController = async (req, res) => {
   const { sortBy, sortOrder } = parsedSortParams(req.query);
   const filter = parsedFiltersParams(req.query);
   filter.userId = req.user._id;
+  
   const contacts = await getAllContacts({
     page,
     perPage,

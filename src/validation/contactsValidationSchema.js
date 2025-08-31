@@ -2,6 +2,7 @@ import Joi from 'joi';
 import { CONTACT_TYPE } from '../constants/constants.js';
 import { isValidObjectId } from 'mongoose';
 
+
 export const contactsValidationSchema = Joi.object({
   name: Joi.string().min(3).max(20).required(),
   phoneNumber: Joi.string()

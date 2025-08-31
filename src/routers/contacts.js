@@ -13,6 +13,7 @@ import { isValidId } from '../middlewares/isValidId.js';
 import { authenticate } from '../middlewares/authenticate.js';
 import { patchValidationSchema } from '../validation/patchValidationSchema.js';
 
+
 const contactsRouter = Router();
 
 contactsRouter.use('/contacts', authenticate);
