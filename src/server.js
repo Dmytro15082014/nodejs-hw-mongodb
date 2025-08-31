@@ -32,6 +32,7 @@ export const setupServer = () => {
   app.post('/auth/login', router);
   app.post('/auth/refresh', router);
   app.post('/auth/logout', router);
+  app.post('/auth/send-reset-email', router);
 
   app.use(notFoundHandler);
 
