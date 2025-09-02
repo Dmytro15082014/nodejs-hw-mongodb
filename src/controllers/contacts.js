@@ -9,13 +9,14 @@ import createHttpError from 'http-errors';
 import { parsedPaginationNumbers } from '../utils/parsedPaginationNumbers.js';
 import { parsedSortParams } from '../utils/parsedSortParams.js';
 import { parsedFiltersParams } from '../utils/parsedFiltersParams.js';
+import { saveFileToUploads } from '../utils/saveFileToUploads.js';
 
 export const getAllContactsController = async (req, res) => {
   const { page, perPage } = parsedPaginationNumbers(req.query);
   const { sortBy, sortOrder } = parsedSortParams(req.query);
   const filter = parsedFiltersParams(req.query);
   filter.userId = req.user._id;
-  
+
   const contacts = await getAllContacts({
     page,
     perPage,
@@ -47,9 +48,17 @@ export const getContactController = async (req, res, next) => {
 };
 
 export const createContactController = async (req, res, next) => {
+  const userId = req.body.userId ?? req.user._id;
+  const photo = req.file;
+  let photoUrl;
+  if (photo) {
+    photoUrl = await saveFileToUploads(photo);
+  }
+
   const contact = await createContact({
     ...req.body,
-    userId: req.body.userId ?? req.user._id,
+    userId,
+    photo: photoUrl,
   });
 
   if (!contact) {
@@ -66,7 +75,15 @@ export const createContactController = async (req, res, next) => {
 export const updateContactController = async (req, res, next) => {
   const contactID = req.params.contactID;
   const userId = req.user._id;
-  const contact = await updateContact(contactID, userId, req.body);
+  const photo = req.file;
+  let photoUrl;
+  if (photo) {
+    photoUrl = await saveFileToUploads(photo);
+  }
+  const contact = await updateContact(contactID, userId, {
+    ...req.body,
+    photo: photoUrl,
+  });
 
   if (!contact.value) {
     throw next(createHttpError(404, 'Contact not found'));
