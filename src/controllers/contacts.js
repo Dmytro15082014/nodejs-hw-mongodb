@@ -9,7 +9,7 @@ import createHttpError from 'http-errors';
 import { parsedPaginationNumbers } from '../utils/parsedPaginationNumbers.js';
 import { parsedSortParams } from '../utils/parsedSortParams.js';
 import { parsedFiltersParams } from '../utils/parsedFiltersParams.js';
-import { saveFileToUploads } from '../utils/saveFileToUploads.js';
+import { featureFlag } from '../utils/featureFlag.js';
 
 export const getAllContactsController = async (req, res) => {
   const { page, perPage } = parsedPaginationNumbers(req.query);
@@ -50,9 +50,10 @@ export const getContactController = async (req, res, next) => {
 export const createContactController = async (req, res, next) => {
   const userId = req.body.userId ?? req.user._id;
   const photo = req.file;
+
   let photoUrl;
   if (photo) {
-    photoUrl = await saveFileToUploads(photo);
+    photoUrl = await featureFlag(photo);
   }
 
   const contact = await createContact({
@@ -76,10 +77,12 @@ export const updateContactController = async (req, res, next) => {
   const contactID = req.params.contactID;
   const userId = req.user._id;
   const photo = req.file;
+
   let photoUrl;
   if (photo) {
-    photoUrl = await saveFileToUploads(photo);
+    photoUrl = await featureFlag(photo);
   }
+
   const contact = await updateContact(contactID, userId, {
     ...req.body,
     photo: photoUrl,
