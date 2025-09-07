@@ -36,6 +36,8 @@ export const setupServer = () => {
   app.post('/auth/logout', router);
   app.post('/auth/send-reset-email', router);
   app.post('/auth/reset-pwd', router);
+  app.post('/auth/get-oauth-url', router);
+  app.post('/auth/confirm-google-auth', router);
 
   app.use(notFoundHandler);
 

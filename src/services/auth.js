@@ -1,5 +1,5 @@
 import createHttpError from 'http-errors';
-import crypto from 'node:crypto';
+import crypto, { randomBytes } from 'node:crypto';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { UsersCollection } from '../db/models/userSchema.js';
@@ -10,6 +10,7 @@ import { sendMail } from '../utils/sendMail.js';
 import path from 'node:path';
 import fs from 'node:fs';
 import handlebars from 'handlebars';
+import { getNameFromPayload, validateCode } from '../utils/googleOauth2.js';
 
 export const registerUser = async (payload) => {
   const userCheck = await UsersCollection.findOne({ email: payload.email });
@@ -160,4 +161,30 @@ export const resetPassword = async (payload) => {
   );
 
   await SessionsCollection.findOneAndDelete({ userId: user._id });
+};
+
+export const loginOrSignInWithGoogle = async (code) => {
+  const loginTicket = await validateCode(code);
+  const payload = loginTicket.getPayload();
+  if (!payload) throw createHttpError(401, 'Unauthorized');
+
+  let user = await UsersCollection.findOne({ email: payload.email });
+  if (!user) {
+    const password = bcrypt.hashSync(randomBytes(10), 10);
+    user = await UsersCollection.create({
+      email: payload.email,
+      name: getNameFromPayload(payload),
+      password,
+    });
+  }
+
+  const newSession = await SessionsCollection.create({
+    accessToken: crypto.randomBytes(30).toString('base64'),
+    refreshToken: crypto.randomBytes(30).toString('base64'),
+    accessTokenValidUntil: new Date(Date.now() + TOKEN.ACC),
+    refreshTokenValidUntil: new Date(Date.now() + TOKEN.REF),
+    userId: user._id,
+  });
+
+  return newSession;
 };
