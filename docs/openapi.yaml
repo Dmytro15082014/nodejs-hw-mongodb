@@ -1,0 +1,32 @@
+openapi: 3.1.0
+info:
+  version: 1.0.0
+  title: my_app
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  description: The contacts data base.
+tags:
+  - name: Contacts
+    description: Operations with contacts
+  - name: Auth
+    description: Auth Operations
+  - name: Sessions
+    description: All about Sessions
+servers:
+  - url: http://localhost:3000
+  - url: https://crud-app-5s4a.onrender.com
+paths:
+  /contacts/{id}:
+    get:
+      $ref: ../swagger/paths/contacts/{id}/get.yaml
+  /contacts:
+    post:
+      $ref: ../swagger/paths/contacts/post.yaml
+    get:
+      $ref: ../swagger/paths/contacts/get.yaml
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
