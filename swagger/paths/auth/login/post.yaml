@@ -30,7 +30,7 @@ responses:
           required:
             - status
             - message
-            - data
+            - accessToken
           properties:
             status:
               type: integer
@@ -38,8 +38,9 @@ responses:
             message:
               type: string
               example: Successfully logged in an user!
-            data:
-              type: object
-              example: mhoaq2mUInFJGORu4s2m+qwlcoZMk499+FFngnyA
+            accessToken:
+              type: string
+              description: New access token
+              example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVC9
   '401':
     $ref: ../../../components/responses/401.yaml
